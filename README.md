@@ -2,6 +2,8 @@
 
 **Live site:** https://abraar64mak.github.io/MiraFlores-AI--Case-study/
 
+**Blog (how I did it, start to finish):** https://abraar64mak.github.io/MiraFlores-AI--Case-study/blog/
+
 A working, web-native workpaper for one complex household's return. It loads `data/packet.json` exactly as delivered.
 
 **Run it**

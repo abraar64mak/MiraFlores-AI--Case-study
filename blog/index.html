@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How I did the Miraflores tax workpaper case study</title>
+<meta name="description" content="A first-person account of how I approached the Miraflores tax workpaper case study: the brief, the data, the research, the design and the build.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root { --bg: #f5f7fb; --panel: #ffffff; --ink: #121a2b; --muted: #596277; --line: #dfe4ee; --accent: #3550e6; --accent-ink: #ffffff; --accent-soft: #e5eaff; --hero-a: #101a3d; --hero-b: #2c42bd; --code: #eef1f8;
+  --sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0b0f1a; --panel: #121929; --ink: #e8ecf5; --muted: #99a3ba; --line: #232c42; --accent: #8ba0ff; --accent-ink: #0a0f22; --accent-soft: #1b2552; --hero-a: #0b1230; --hero-b: #26379b; --code: #1a2236; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #0b0f1a; --panel: #121929; --ink: #e8ecf5; --muted: #99a3ba; --line: #232c42; --accent: #8ba0ff; --accent-ink: #0a0f22; --accent-soft: #1b2552; --hero-a: #0b1230; --hero-b: #26379b; --code: #1a2236; color-scheme: dark; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.75 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+#bar { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 20; }
+.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 14px; padding: 10px max(16px, 3vw); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); font-size: 14px; }
+.top b { font-weight: 800; letter-spacing: -0.01em; } .top .sp { flex: 1; }
+.top a.pill, .top button { font: inherit; font-weight: 600; text-decoration: none; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; cursor: pointer; }
+.top a.pill:hover, .top button:hover { border-color: var(--accent); }
+.hero { background: radial-gradient(900px 260px at 100% -30%, color-mix(in srgb, var(--hero-b) 90%, #fff 10%), transparent 60%), linear-gradient(135deg, var(--hero-a), var(--hero-b)); color: #fff; padding: 56px max(16px, 4vw) 48px; }
+.hero .in { max-width: 1060px; margin: 0 auto; }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); margin-bottom: 14px; }
+.hero h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.08; letter-spacing: -0.03em; margin: 0 0 18px; font-weight: 800; max-width: 20ch; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 22px; color: rgba(255, 255, 255, 0.82); font-size: 15px; }
+.meta b { color: #fff; font-weight: 700; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.btns a { text-decoration: none; font-weight: 700; font-size: 14.5px; padding: 10px 18px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.34); color: #fff; background: rgba(255, 255, 255, 0.12); }
+.btns a:first-child { background: #fff; color: #15204d; border-color: #fff; }
+.btns a:hover { background: rgba(255, 255, 255, 0.24); } .btns a:first-child:hover { background: #eef1ff; }
+.wrap { max-width: 1060px; margin: 0 auto; padding: 40px max(16px, 4vw) 90px; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; }
+nav.toc { position: sticky; top: 76px; align-self: start; font-size: 14px; }
+nav.toc h4 { margin: 0 0 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+nav.toc a { display: flex; gap: 10px; align-items: baseline; padding: 6px 10px; margin-left: -10px; border-radius: 8px; color: var(--muted); text-decoration: none; line-height: 1.35; }
+nav.toc a .n { font: 600 12px var(--mono); color: var(--muted); min-width: 16px; }
+nav.toc a:hover { color: var(--ink); background: var(--accent-soft); }
+nav.toc a.on { color: var(--ink); background: var(--accent-soft); font-weight: 700; } nav.toc a.on .n { color: var(--accent); }
+article { min-width: 0; max-width: 700px; }
+article > p:first-child { font-size: 19px; color: var(--muted); margin-top: 0; }
+.post-sec { padding-top: 6px; margin-bottom: 44px; }
+.post-sec h2 { display: flex; gap: 14px; align-items: center; font-size: clamp(22px, 3vw, 28px); line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 14px; font-weight: 800; }
+.post-sec h2 .n { flex: none; width: 38px; height: 38px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font: 700 16px var(--mono); }
+.post-sec p { margin: 0 0 16px; }
+.post-sec ul, .post-sec ol { margin: 0 0 18px; padding-left: 0; list-style: none; }
+.post-sec li { position: relative; padding: 9px 14px 9px 38px; margin: 0 0 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.post-sec ul li::before { content: ""; position: absolute; left: 15px; top: 20px; width: 9px; height: 9px; border-radius: 3px; background: var(--accent); }
+.post-sec ol { counter-reset: s; } .post-sec ol li { counter-increment: s; }
+.post-sec ol li::before { content: counter(s); position: absolute; left: 11px; top: 9px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 700 12px var(--mono); display: grid; place-items: center; }
+.post-sec li p { margin: 0; }
+code { font: 0.86em var(--mono); background: var(--code); padding: 1px 6px; border-radius: 6px; }
+strong { font-weight: 700; }
+footer { border-top: 1px solid var(--line); padding: 28px max(16px, 4vw) 50px; color: var(--muted); font-size: 14.5px; }
+footer .in { max-width: 1060px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 10px 26px; }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; padding-top: 28px; } nav.toc { display: none; } body { font-size: 16.5px; } .hero { padding-top: 40px; } .top .hide-m { display: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<header class="top"><b>abraar64mak</b><span class="sp"></span><a class="pill hide-m" href="../">Live workpaper</a><a class="pill hide-m" href="https://github.com/abraar64mak/MiraFlores-AI--Case-study">Code</a><button id="theme" aria-label="Toggle light or dark">◐</button></header>
+<div class="hero"><div class="in">
+  <div class="eyebrow">Case study log · Miraflores tax workpaper</div>
+  <h1>How I did the Miraflores tax workpaper case study</h1>
+  <div class="meta"><span>By <b>abraar64mak</b></span><span>Assessment received <b>October 14, 2026</b></span><span>10 min read</span></div>
+  <div class="btns"><a href="../">Open the live workpaper</a><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study">View the code</a><a href="../docs/ONE_PAGER.pdf">One-pager (PDF)</a><a href="../docs/ERRORS_FOUND.pdf">Errors found (PDF)</a></div>
+</div></div>
+<div class="wrap">
+  <nav class="toc" aria-label="Contents"><h4>In this post</h4><a href="#step-1-i-got-the-assessment"><span class="n">1</span><span>I got the assessment</span></a><a href="#step-2-i-opened-the-data"><span class="n">2</span><span>I opened the data</span></a><a href="#step-3-i-searched-how-other-people-solve-this"><span class="n">3</span><span>I searched how other people solve this</span></a><a href="#step-4-i-turned-the-research-into-an-approach"><span class="n">4</span><span>I turned the research into an approach</span></a><a href="#step-5-i-brainstormed"><span class="n">5</span><span>I brainstormed</span></a><a href="#step-6-i-designed-it"><span class="n">6</span><span>I designed it</span></a><a href="#step-7-i-built-it"><span class="n">7</span><span>I built it</span></a><a href="#how-i-used-ai"><span class="n">·</span><span>How I used AI</span></a><a href="#what-is-left-and-what-i-learned"><span class="n">·</span><span>What is left and what I learned</span></a></nav>
+  <article>
+
+<p>This is a diary of what I did, in the order I did it. I wrote it so I would remember my own thinking, and so anyone reading my submission can see how I got there.</p>
+<section class="post-sec" aria-labelledby="step-1-i-got-the-assessment"><h2 id="step-1-i-got-the-assessment"><span class="n">1</span><span>I got the assessment</span></h2>
+<p>On 14 October 2026 I received the test assessment from Miraflores. It was a three-page PDF called "Case Study: Redesign the Tax Workpaper" and one big JSON file. I started working on it the same day.</p>
+<p>I read the PDF slowly, twice. Here is what I understood and the notes I wrote down:</p>
+<ul>
+<li>At Miraflores, software reads the client's documents and works out the tax return. CPAs then review it.</li>
+<li>The workpaper is where someone proves the return is right. Where did each number come from, what was done to it, who checked it, what is still open.</li>
+<li>Lots of different people use it: preparers, reviewers, partners, the client, the firm's admin, next year's preparer, even an IRS examiner years later.</li>
+<li>They said clearly: do not build a spreadsheet. Pretend you have never seen a workpaper and invent one from the goals.</li>
+<li>The bar: a CPA with 20 years of experience should find it faster and more trustworthy than what they use now, and a new person should be able to use it on day one.</li>
+<li>The list of things it must do was long. I counted about 25: evidence, calculation, change, judgment, people, filing and after, firm, and a list of records a CPA expects.</li>
+<li>I do not need to know tax law and I do not need to read documents myself. That part is done for me.</li>
+<li>What to hand in: a working web app on a link, one page on my core idea and data model, the errors I found and how my design showed them, a video, and a note on how I used AI.</li>
+</ul>
+<p>My first conclusion was simple. I cannot build all 25 things equally well, so I have to choose what matters most and make that really good.</p>
+</section>
+<section class="post-sec" aria-labelledby="step-2-i-opened-the-data"><h2 id="step-2-i-opened-the-data"><span class="n">2</span><span>I opened the data</span></h2>
+<p>The JSON file is the household of Okafor and Lindqvist (invented). They moved from California to Texas in the middle of the year. They have stock pay from an employer, a one-person business, two brokerages and crypto, a Swedish bank account, a rental and a rental they sold, two K-1s, a backdoor Roth, a college student, and gifts of stock and a car.</p>
+<p>Inside the file:</p>
+<ul>
+<li>74 documents</li>
+<li>about 3,000 values the software read from those documents, each with a confidence score</li>
+<li>three versions of the computed return</li>
+<li>the client's answers and messages</li>
+<li>last year's return, IRS records, the firm's staff, and a timeline</li>
+</ul>
+<p>The README had one sentence I noted twice: "The packet contains confident mistakes."</p>
+<p>Key notes from the README:</p>
+<ul>
+<li>The printed text on each page is the truth. The extracted values can be wrong. The computed return can be wrong too.</li>
+<li>I cannot rerun the tax engine. To show the effect of a change I have to multiply the change by the rate it gives.</li>
+<li>Version 3 is the current return.</li>
+</ul>
+<p>Then I looked for the mistakes. I wrote small scripts to print the structure, compare printed text with extracted values, compare documents with each other, and see what changed between the three versions. These are some of the things I found:</p>
+<ul>
+<li>The business income on Schedule C was 163,700, but the books said 151,300. The gap was exactly one 1099-K for 12,400. The books showed that money was already inside one client's 1099-NEC. It was counted twice.</li>
+<li>The mileage log had four pages. Page 3 was a second scan of page 2, so 3,700 miles were counted twice.</li>
+<li>The home loan form already included the interest paid when the loan was paid off, and the return added that interest again.</li>
+<li>One W-2 showed 111,300 as California wages, because the employer kept California as the work state by mistake. The paystub showed only 22,469 before the move.</li>
+<li>The son's Social Security number was typed wrong in the client's form. The card they uploaded later had a different number.</li>
+</ul>
+<p>By the end I had a list of 15 errors. The thing that surprised me most: every wrong number had a confidence of 0.94 to 0.99. The scores did not help at all. And none of the 11 errors that change the tax were in the software's own list of warnings. The errors were between documents, not inside one.</p>
+</section>
+<section class="post-sec" aria-labelledby="step-3-i-searched-how-other-people-solve-this"><h2 id="step-3-i-searched-how-other-people-solve-this"><span class="n">3</span><span>I searched how other people solve this</span></h2>
+<p>I did not find anything about tax workpapers specifically. So I searched for the pieces of the problem separately. These are the notes I took:</p>
+<ul>
+<li><strong>Provenance (where data comes from).</strong> One paper splits it into "where" a value was copied from and "why" it exists, meaning which inputs decided it. A CPA asks exactly these two questions about a number. A second paper, on provenance semirings, shows how a calculated value can be traced back through its inputs. There is also a W3C standard (PROV) that gives names to documents, activities and people.</li>
+<li><strong>Audit trails.</strong> A paper about audits based on provenance said an audit is only as trustworthy as the records behind it. That made me want a log nobody can quietly change.</li>
+<li><strong>Tax software that explains itself.</strong> I found some patents that describe a graph of tax calculations where each step carries an explanation. Useful as an idea, but they are patents, not research.</li>
+<li><strong>Law as code.</strong> The Catala paper found a bug in an official tax program. That made me trust the engine less, which fit what I saw in the data.</li>
+<li><strong>Spreadsheet errors.</strong> Studies of spreadsheets say mistakes hide in the links between cells. That is why a grid felt wrong for this job. I only saw summaries of some of these studies, so I used them as motivation, not as numbers.</li>
+<li><strong>People trust automation too much.</strong> Papers on automation bias, and one on auditors, say reviewers become less careful when a tool looks sure. That explained my confidence-score finding.</li>
+<li><strong>Local-first software.</strong> The idea that an app can keep the user's data in the browser and still work well.</li>
+</ul>
+</section>
+<section class="post-sec" aria-labelledby="step-4-i-turned-the-research-into-an-approach"><h2 id="step-4-i-turned-the-research-into-an-approach"><span class="n">4</span><span>I turned the research into an approach</span></h2>
+<p>For each idea I asked what it means for my app. I ended up with five decisions:</p>
+<ol type="1">
+<li>Every number is a <strong>claim</strong> that carries its own proof: where it came from, why it has this value, how it was checked, and what is still open.</li>
+<li>The checks compare <strong>sources with each other</strong>, not a number with its own source. Documents against documents, client answers against documents, the return against the IRS record.</li>
+<li>Every action is saved in a <strong>log</strong> that is chained with hashes, so history cannot be changed without it showing.</li>
+<li>A sign-off remembers the numbers it covered. If one changes, the sign-off <strong>reopens</strong> by itself. The same idea works for the client's e-signature.</li>
+<li>The screen shows <strong>disagreement</strong> between sources and not confidence.</li>
+</ol>
+<p>I also decided what I would not do. I would not rebuild the tax engine. I would estimate tax effects with the rates the packet gives me and say clearly they are estimates.</p>
+</section>
+<section class="post-sec" aria-labelledby="step-5-i-brainstormed"><h2 id="step-5-i-brainstormed"><span class="n">5</span><span>I brainstormed</span></h2>
+<p>I thought about three shapes before choosing:</p>
+<ul>
+<li>A smarter spreadsheet. The brief already said no, and it hides the links where the errors live.</li>
+<li>A document viewer where you read PDFs and tick things off. Good for evidence, weak for calculation and review.</li>
+<li>A chat assistant that answers questions. It sounded nice, but a CPA needs the same answer every time, and that works against "more trustworthy".</li>
+</ul>
+<p>So I went with the claims idea. Then I asked who opens this and what they want:</p>
+<ul>
+<li>A preparer wants a list of things to fix.</li>
+<li>A reviewer wants things to approve and areas to sign.</li>
+<li>A partner wants to know what is blocking the release.</li>
+<li>The firm admin wants settings, access and hours.</li>
+<li>A quality reviewer wants to see what was frozen at filing.</li>
+<li>The client wants plain words and one next step.</li>
+</ul>
+<p>That is how I decided on a different home screen for each role, with the same data underneath.</p>
+</section>
+<section class="post-sec" aria-labelledby="step-6-i-designed-it"><h2 id="step-6-i-designed-it"><span class="n">6</span><span>I designed it</span></h2>
+<p>I sketched the data model first: documents, values read from them, claims, findings, adjustments, verifications, questions, decisions, sign-offs and events. Then the screens: a panel that opens from any number and shows the source page with the field highlighted, a findings list with evidence and a suggested fix, a change ledger, people and sign-offs, filing, and the 16 records a CPA expects.</p>
+<p>The first version of the look worked but I was not happy with it. I wanted it to be attractive and to feel made for each role, so I asked for a redesign. That gave me the role-based menus, the top bar that changes with the role, a search you can open with Ctrl+K, and a simple chart that shows where the tax moves.</p>
+</section>
+<section class="post-sec" aria-labelledby="step-7-i-built-it"><h2 id="step-7-i-built-it"><span class="n">7</span><span>I built it</span></h2>
+<p>I built it in layers and tested each layer.</p>
+<ol type="1">
+<li>Load the packet exactly as delivered and build the links between documents, values and return lines.</li>
+<li>The checks and the "figures that should agree" list. It gave 29 findings and 29 reconciliations.</li>
+<li>The log, undo, changes that keep the original value, and sign-offs that reopen.</li>
+<li>The screens.</li>
+<li>The filing story. A partner releases the return, both spouses sign, and the e-file goes out. The first try is rejected because of the son's number. A review note opens, the fix makes the signatures go stale, and everything has to be signed again. After it is accepted the return is frozen and later changes become amendments.</li>
+<li>The client's copy, a response record for an IRS letter, and a plan for next year.</li>
+</ol>
+<p>For testing I wrote scripts that open every screen as every role, run a whole season from start to filing, and check the phone layout.</p>
+<p>Then I put it online with GitHub Pages. The first time I opened the link I saw a 404 page. I checked my settings and the build, waited for the deploy to finish, refreshed, and it worked.</p>
+</section>
+<section class="post-sec plain" aria-labelledby="how-i-used-ai"><h2 id="how-i-used-ai"><span>How I used AI</span></h2>
+<p>The assessment says to use any tools I like, including AI, and to say how. I worked with Claude Code the whole time. I decided the direction, the scope and the design, and I checked the results. Claude Code wrote most of the code and the first drafts of the documents, and ran the scripts and tests. Every error in my list was checked against the printed text of the documents. The app itself does not use AI to decide anything. The same data always gives the same findings. More detail is in <code>docs/AI_AND_TOOLS.md</code>.</p>
+</section>
+<section class="post-sec plain" aria-labelledby="what-is-left-and-what-i-learned"><h2 id="what-is-left-and-what-i-learned"><span>What is left and what I learned</span></h2>
+<p>Still to do: the video walkthrough, and making it work for several people on different computers. Right now "several people" means several tabs of one browser.</p>
+<p>What I learned: the most interesting errors were never inside one document. They were in the gaps between documents. A workpaper that shows those gaps is more useful than one that makes every number look confident.</p>
+</section></article>
+</div>
+<footer><div class="in"><span>Written by abraar64mak.</span><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study/blob/claude/gifted-wright-vops7y/docs/AI_AND_TOOLS.md">How I used AI</a><a href="../">The workpaper</a><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study">Source on GitHub</a></div></footer>
+<script>
+(function () {
+  var bar = document.getElementById("bar"), links = [].slice.call(document.querySelectorAll("nav.toc a")), secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+  function onScroll() {
+    var h = document.documentElement, p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight); bar.style.width = (p * 100) + "%";
+    var cur = 0; secs.forEach(function (s, i) { if (s && s.getBoundingClientRect().top < 140) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle("on", i === cur); });
+  }
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  try { var t = localStorage.getItem("blog.theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  document.getElementById("theme").addEventListener("click", function () {
+    var r = document.documentElement, dark = r.getAttribute("data-theme") ? r.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var n = dark ? "light" : "dark"; r.setAttribute("data-theme", n); try { localStorage.setItem("blog.theme", n); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

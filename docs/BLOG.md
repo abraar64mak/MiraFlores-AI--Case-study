@@ -7,7 +7,7 @@ This is a diary of what I did, in the order I did it. I wrote it so I would reme
 
 ## Step 1: I got the assessment
 
-On [add the date you received it] I received the test assessment from Miraflores. It was a three-page PDF called "Case Study: Redesign the Tax Workpaper" and one big JSON file. I started working on it on 14 October.
+On 14 October 2026 I received the test assessment from Miraflores. It was a three-page PDF called "Case Study: Redesign the Tax Workpaper" and one big JSON file. I started working on it the same day.
 
 I read the PDF slowly, twice. Here is what I understood and the notes I wrote down:
 
