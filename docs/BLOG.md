@@ -122,4 +122,4 @@ The assessment says to use any tools I like, including AI, and to say how. I wor
 
 ## What I learned
 
-What I learned: the most interesting errors were never inside one document. They were in the gaps between documents. A workpaper that shows those gaps is more useful than one that makes every number look confident.
+The most interesting errors were never inside one document. They were in the gaps between documents. A workpaper that shows those gaps is more useful than one that makes every number look confident.
