@@ -1,0 +1,42 @@
+// Tests api/ai.js against a mock Anthropic server (no real key or network needed). node tools/ai-proxy-test.mjs
+import http from "node:http";
+const seen = [];
+let mode = "ok";
+const upstream = http.createServer(async (req, res) => {
+  let raw = ""; for await (const c of req) raw += c;
+  seen.push({ url: req.url, headers: req.headers, body: JSON.parse(raw || "{}") });
+  res.setHeader("content-type", "application/json");
+  const base = { id: "msg_test", type: "message", role: "assistant", model: "claude-opus-5-5", usage: { input_tokens: 10, output_tokens: 5 }, stop_sequence: null };
+  if (mode === "refusal") return res.end(JSON.stringify({ ...base, content: [], stop_reason: "refusal", stop_details: { type: "refusal", category: "cyber" } }));
+  res.end(JSON.stringify({ ...base, content: [{ type: "text", text: "Mock answer [D14 p1]" }], stop_reason: "end_turn" }));
+});
+await new Promise((r) => upstream.listen(0, r));
+process.env.ANTHROPIC_BASE_URL = `http://127.0.0.1:${upstream.address().port}`;
+process.env.ANTHROPIC_API_KEY = "sk-test"; process.env.AI_RATE_PER_MIN = "4"; process.env.AI_ACCESS_CODE = "letmein";
+const { default: handler } = await import("../api/ai.js");
+const call = async ({ method = "POST", headers = {}, body }) => {
+  const req = { method, headers: { host: "site.test", ...headers }, body, socket: { remoteAddress: "1.2.3.4" } };
+  let status = 0, json = null; const h = {};
+  const res = { setHeader: (k, v) => (h[k] = v), status(c) { status = c; return this; }, json(o) { json = o; return this; } };
+  await handler(req, res); return { status, json, h };
+};
+const T = (n, ok, x = "") => { console.log((ok ? "PASS " : "FAIL ") + n + (x ? "  " + x : "")); if (!ok) process.exitCode = 1; };
+let r = await call({ method: "GET" });
+T("GET reports availability and that a code is needed", r.status === 200 && r.json.ok && r.json.needsCode && r.json.model === "claude-opus-5-5");
+r = await call({ body: { prompt: "hi" } }); T("no access code is rejected", r.status === 401 && r.json.error === "access_code");
+const ok = { "x-access-code": "letmein" };
+r = await call({ headers: ok, body: { prompt: "Explain <data>x</data>" } });
+T("valid request returns the model's text", r.status === 200 && /Mock answer/.test(r.json.text), JSON.stringify(r.json));
+const b = seen[0].body;
+T("request uses the default model, a system prompt and low effort", b.model === "claude-opus-5-5" && /ONLY the facts/.test(b.system) && b.output_config.effort === "low" && b.max_tokens === 4000);
+T("server-side fallback is requested", b.fallbacks === "default" && /server-side-fallback-2026-07-01/.test(seen[0].headers["anthropic-beta"] || ""), seen[0].headers["anthropic-beta"]);
+T("the key goes to the model host only, from the environment", seen[0].headers["x-api-key"] === "sk-test");
+r = await call({ headers: { ...ok, origin: "https://evil.example" }, body: { prompt: "hi" } }); T("foreign origin is blocked", r.status === 403);
+r = await call({ headers: { ...ok, origin: "http://site.test" }, body: { prompt: "hi" } }); T("same origin is allowed", r.status === 200);
+r = await call({ headers: ok, body: { prompt: "x".repeat(30001) } }); T("oversize prompt is refused", r.status === 413);
+r = await call({ headers: ok, body: { prompt: 5 } }); T("non-string prompt is refused", r.status === 400);
+await call({ headers: ok, body: { prompt: "third" } }); await call({ headers: ok, body: { prompt: "fourth" } });
+r = await call({ headers: ok, body: { prompt: "fifth" } }); T("per-minute limit applies (4 per visitor)", r.status === 429 && r.json.scope === "minute", String(r.status));
+mode = "refusal";
+r = await call({ headers: { ...ok, "x-forwarded-for": "9.9.9.9" }, body: { prompt: "hi" } }); T("a model refusal maps to 422", r.status === 422 && r.json.error === "refused");
+upstream.close(); process.exit(process.exitCode || 0);

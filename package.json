@@ -1,0 +1,15 @@
+{
+  "name": "miraflores-workpaper",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Okafor-Lindqvist 2025 tax workpaper: static web app plus an optional serverless endpoint for the AI helpers.",
+  "scripts": {
+    "dev": "node tools/dev-server.mjs",
+    "test": "node tools/logic-test.mjs && node tools/ai-proxy-test.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.134.0"
+  },
+  "engines": { "node": ">=20" }
+}
