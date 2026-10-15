@@ -120,8 +120,6 @@ Then I put it online with GitHub Pages. The first time I opened the link I saw a
 
 The assessment says to use any tools I like, including AI, and to say how. I worked with Claude Code the whole time. I decided the direction, the scope and the design, and I checked the results. Claude Code wrote most of the code and the first drafts of the documents, and ran the scripts and tests. Every error in my list was checked against the printed text of the documents. The app itself does not use AI to decide anything. The same data always gives the same findings. More detail is in `docs/AI_AND_TOOLS.md`.
 
-## What is left and what I learned
-
-Still to do: the video walkthrough, and making it work for several people on different computers. Right now "several people" means several tabs of one browser.
+## What I learned
 
 What I learned: the most interesting errors were never inside one document. They were in the gaps between documents. A workpaper that shows those gaps is more useful than one that makes every number look confident.
