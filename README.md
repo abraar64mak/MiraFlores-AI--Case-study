@@ -15,6 +15,6 @@ A working, web-native workpaper for one complex household's return. It loads `da
 
 **How AI was used** (as the brief asks): see `docs/AI_AND_TOOLS.md`.
 
-**Hand-in documents** (`docs/`): `ONE_PAGER.md` (core idea and data model), `ERRORS_FOUND.md`, `AI_AND_TOOLS.md`, `VIDEO_SCRIPT.md`, `DESIGN_NOTES.md` (design references, model, roadmap).
+**Hand-in** (`docs/`): the working app (live site above), `ONE_PAGER.pdf` / `.md` (core idea and data model, one page), `ERRORS_FOUND.pdf` / `.md` (the errors found and how the design surfaced them). Also: `ONE_PAGER.md` (core idea and data model), `ERRORS_FOUND.md`, `AI_AND_TOOLS.md`, `VIDEO_SCRIPT.md`, `DESIGN_NOTES.md` (design references, model, roadmap).
 
 **Tests**: `node tools/logic-test.mjs`; with the server running, `node tools/e2e.mjs` (every route) and `node tools/flow.mjs` (a whole season through the real app code).

@@ -1,43 +1,41 @@
 # Core idea and data model
 
-## The idea: a return is a set of claims, and every claim carries its own proof
+**Okafor-Lindqvist 2025 tax workpaper**
 
-A traditional workpaper is a grid of numbers with ticks and notes beside it. The proof lives next to the number, and nothing keeps it true when the number moves.
+## The idea: every number is a claim that carries its own proof
 
-Here every number is a **claim**, and a claim is a node in a graph:
+A workpaper is usually a grid with ticks and notes beside it. The proof sits next to the number, and nothing keeps it true when the number moves. Here every number is a **claim** in a graph, and each claim carries four things:
 
-- **Where** it came from: a document, a page and a field (the packet's `extracted_values`), or a client answer, a prior-year record, an agency record.
-- **Why** it has this value: the engine rule and the claims it was computed from (`inputs`), so any total opens into a tree down to documents.
+- **Where** it came from: a document, page and field, or a client answer, prior-year record or agency record.
+- **Why** it has this value: the engine rule and the claims it was computed from, so any total opens down to documents.
 - **How it was verified**: agreed to source, recalculated, confirmed with the client, agreed to prior year, agreed to a third-party record.
-- **What is open**: findings, review notes, adjustments, sign-offs that cover it.
+- **What is open**: findings, review notes, adjustments and sign-offs that touch it.
 
-Three mechanisms make this trustworthy rather than decorative:
+Three mechanisms keep this honest:
 
-1. **Independent checks.** The packet "contains confident mistakes" (pipeline confidence is 0.94–0.99 on every one I found), so neither the engine nor the extraction score is the checker. Checks compare documents with documents (a 1099-K that is a subset of a 1099-NEC, a page scanned twice, one interest account on two forms), answers with documents, and the return with outside records (IRS transcript, FTB account). 29 findings, 11 error-level, none in the engine's own diagnostics. 29 reconciliations ("figures that should agree") recompute from the live return, so a correction makes the difference disappear.
-2. **An append-only, hash-chained event log.** Everything the workpaper knows beyond the packet is an event (adjustment, verification, question, sign-off, view of a sensitive value, release, signature, e-file result, freeze). State is a projection of the log. That gives undo in batches, "what changed since I last looked", a tamper check, and a record that can be exported years later.
-3. **Dependency-driven reopening.** A sign-off stores the value of every line it covers. If any value changes, it reopens by itself. The same digest idea makes the partner's release and the clients' e-signatures go stale when the return changes after they were given.
+1. **Independent checks.** The packet "contains confident mistakes" (every one I found had pipeline confidence 0.94 to 0.99), so neither the engine nor the confidence score is the checker. Checks compare documents with documents, answers with documents, and the return with the IRS and FTB records. Result: 29 findings, 11 at error level, none in the engine's own diagnostics, plus 29 reconciliations that recompute from the live return.
+2. **An append-only, hash-chained event log.** Every adjustment, verification, question, sign-off, release, signature and filing step is an event. State is a replay of the log, which gives undo, "what changed since I last looked", a tamper check, and a record that survives a 2028 examination.
+3. **Dependency-driven reopening.** A sign-off stores the value of every line it covers and reopens by itself if any changes. The same rule makes a release or an e-signature go stale if the return changes after it was given.
 
-Adjustments never overwrite. An adjustment is its own entry (who, why, evidence, tax effect). Sums and carries are re-evaluated through the graph so AGI moves live; tax effect is `change × the engine's per-dollar rate`, because the README says the engine cannot be rerun. At filing the return freezes (snapshot + hash); later changes are flagged as amendments layered on top.
+Adjustments never overwrite: each is its own entry with who, why, evidence and tax effect. Sums and carries re-evaluate through the graph, so AGI moves live. Tax effect is change × the engine's per-dollar rate, since the README says the engine cannot be rerun. At filing the return freezes (snapshot and hash); later changes are amendments on top.
 
 ## Data model
 
-| Entity | Key fields | Built from |
+| Entity | Key fields | Source |
 |---|---|---|
-| Document | id, type, pages, extraction status, disposition (used / superseded / duplicate / procedural / not extracted) | `documents[]` |
-| Observation | document, page, field, text as printed, value, confidence | `extracted_values[]` |
-| Claim | key, value, rule, inputs, sources, jurisdiction, area | `return_versions[].lines[]` |
-| Finding | id, severity, kind, evidence refs, affected claims, suggested adjustments, status | independent checks + engine diagnostics |
-| Adjustment | target, set/delta, category, sign, reason, evidence, author, status, what-if, amendment | new (event) |
-| Verification | target, type, evidence, author | new (event) |
-| Thread | kind (client question, colleague question, review note, task), target, assignee, due, blocking, messages | `client.*` + new |
-| Decision | kind (judgment, election, due diligence, penalty), authority relied on, approvals | new |
-| Sign-off | area, level, values at signing, state (valid / reopened) | new |
-| Event | actor, role, type, payload, batch, prev hash, hash | everything above |
+| Document | id, pages, extraction status, disposition | `documents[]` |
+| Observation | document, page, field, as printed, value, confidence | `extracted_values[]` |
+| Claim | key, value, rule, inputs, sources, area | `return_versions[].lines[]` |
+| Finding | severity, evidence refs, affected claims, suggested adjustments, status | checks + diagnostics |
+| Adjustment | target, set or delta, category, reason, evidence, author, status | new (event) |
+| Verification, Thread, Decision | target, type, evidence; assignee, due, blocking; authority relied on | new (events) |
+| Sign-off | area, level, values at signing, state (valid or reopened) | new (event) |
+| Event | actor, role, type, payload, previous hash, hash | everything above |
 
-Everything on the Records tab (16 records a CPA expects) is a view over these claims; nothing is typed twice.
+All 16 CPA records are views over these claims, so nothing is typed twice.
 
 ## Trade-offs
 
-- **Static client-side app, browser storage.** It runs from a link and saves everything, but several people at once means several browser tabs or windows of one browser (storage events and a broadcast channel keep them in sync, with presence). A server with per-user auth would replace the log store; the event model would not change.
-- **Simulated source documents** are rendered from `printed_content`; highlights are placed by text match. Real page images with the packet's coordinates can replace the view without changing any trace link.
-- **Tax effects are estimates** (change × rate) and are labelled so; large changes can cross thresholds.
+- **Static app, browser storage:** it runs from a link and saves everything, but "several people at once" means several tabs of one browser. A server would replace the log store; the event model would not change.
+- **Simulated source pages** are rendered from `printed_content`; real page images can replace them without changing any trace link.
+- **Tax effects are estimates**, labelled as such; large changes can cross thresholds.
