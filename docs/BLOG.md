@@ -118,4 +118,11 @@ Then I put it online with GitHub Pages. The first time I opened the link I saw a
 
 ## How I used AI
 
-The assessment says to use any tools I like, including AI, and to say how. I worked with Claude Code the whole time. I decided the direction, the scope and the design, and I checked the results. Claude Code wrote most of the code and the first drafts of the documents, and ran the scripts and tests. Every error in my list was checked against the printed text of the documents. The app itself does not use AI to decide anything. The same data always gives the same findings. More detail is in `docs/AI_AND_TOOLS.md`.
+The assessment encourages the use of any tools, including AI, and asks how they were used. I used an AI coding assistant (Claude Code) as a working tool throughout. The direction, the scope, the data model, the roles and the rules were my decisions, and I reviewed and verified what the tools produced.
+
+- **Research.** I used it to search for and summarize literature on data provenance, audit trails and automation bias. I read the summaries, chose the ideas that fit a workpaper, and turned them into design decisions.
+- **Analysis.** I used it to write scripts that compare the printed text of each page with the extracted values, and documents with each other. I then checked every one of the 15 errors against the printed text of the source documents myself.
+- **Implementation.** I used it to speed up implementation and to write automated tests that open every screen as every role and run a full season from preparation to filing. I reviewed the behaviour of each screen and corrected what the tests and my own review found.
+- **Documentation.** I used it for first drafts of the write-ups, which I then edited.
+
+The app itself does not use AI to make decisions. The same data always produces the same findings. More detail is in `docs/AI_AND_TOOLS.md`.
