@@ -11,7 +11,4 @@ const appTag = out.match(/<script>\n\/\* Boot:[\s\S]*?<\/script>\n/)[0];
 out = out.replace(appTag, "").replace("</body>", () => appTag + "</body>");
 fs.mkdirSync("dist", { recursive: true });
 fs.writeFileSync("dist/workpaper.html", out);
-// GitHub Pages can also publish the /docs folder, so ship the same self-contained app there as its index.
-fs.mkdirSync("docs", { recursive: true });
-fs.writeFileSync("docs/index.html", out);
 console.log("dist/workpaper.html", (out.length / 1e6).toFixed(2), "MB");

@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Okafor-Lindqvist 2025 tax workpaper: static web app plus an optional serverless endpoint for the AI helpers.",
+  "description": "Okafor-Lindqvist 2025 tax workpaper: a static web app that loads the packet as delivered.",
   "scripts": {
-    "dev": "node tools/dev-server.mjs",
-    "test": "node tools/logic-test.mjs && node tools/ai-proxy-test.mjs"
-  },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.134.0"
+    "build": "node tools/build-single.mjs && node tools/build-blog.mjs",
+    "test": "node tools/logic-test.mjs"
   },
   "engines": { "node": ">=20" }
 }

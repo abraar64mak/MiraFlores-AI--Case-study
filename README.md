@@ -1,22 +1,45 @@
 # Okafor-Lindqvist 2025 tax workpaper
 
-**Live site:** https://abraar64mak.github.io/MiraFlores-AI--Case-study/
+A web-native workpaper for one complex household's return, built for the Miraflores case study "Redesign the Tax Workpaper". It loads `data/packet.json` exactly as delivered.
 
-**Blog (how I did it, start to finish):** https://abraar64mak.github.io/MiraFlores-AI--Case-study/blog/
+- **Live app:** https://abraar64mak.github.io/MiraFlores-AI--Case-study/
+- **Blog (how I approached it, start to finish):** https://abraar64mak.github.io/MiraFlores-AI--Case-study/blog/
 
-A working, web-native workpaper for one complex household's return. It loads `data/packet.json` exactly as delivered.
+## Hand-in
 
-**Run it**
-- Open `dist/workpaper.html` (single file, works offline), or
-- `python3 -m http.server 8000` in this folder and open `http://localhost:8000/` (uses `index.html`, `js/`, `css/`, `data/packet.json`).
-- Rebuild the single file: `node tools/build-single.mjs`.
+| Item | Where |
+|---|---|
+| Working workpaper (role switcher, saves everything) | the live app above |
+| Core idea and data model, one page | `docs/ONE_PAGER.pdf` (source: `docs/ONE_PAGER.md`) |
+| Errors found and how the design surfaced them | `docs/ERRORS_FOUND.pdf` (source: `docs/ERRORS_FOUND.md`) |
+| How AI and other tools were used | `docs/AI_AND_TOOLS.md` |
+| Design references and roadmap | `docs/DESIGN_NOTES.md` |
+| Video walkthrough | linked in the submission |
 
-**Use it**: press **Ctrl K** to search or jump anywhere. Switch roles at the top right (each role gets its own navigation, home desk and colour); on a fresh file use **Load demo activity** on the home screen (or Ctrl K) so the reviewer and partner desks have work in them. Switch roles at the top right. Staff: Priya (preparer), Daniel (reviewer), Helen (partner), Marcus (preparer, no sensitive-data clearance), Jo (administrator), Sam (quality reviewer, active only after filing). Clients: Ngozi and Erik. State is saved in the browser; Activity > Reset returns to the packet as delivered. Open a second tab as another role to see changes arrive live.
+## Using the app
 
-**Public website with the AI helpers**: see `docs/DEPLOY.md` (Vercel hosts the static site and `api/ai.js`, which keeps the API key out of the browser).
+- Press **Ctrl K** to search or jump anywhere.
+- Switch roles with the selector at the top right. Each role has its own navigation, home desk and colour: Priya (preparer), Daniel (reviewer), Helen (partner), Marcus (preparer without sensitive-data clearance), Jo (firm administrator), Sam (quality reviewer, active after filing), and the clients Ngozi and Erik.
+- Everything is saved in the browser. **Activity > Reset workpaper** (partner or administrator) returns it to the packet as delivered.
+- Open a second tab as another role to watch changes arrive live.
+- On a fresh file, **Load demo activity** on the home screen gives the reviewer and partner desks some work.
 
-**How AI was used** (as the brief asks): see `docs/AI_AND_TOOLS.md`.
+## Running it locally
 
-**Hand-in** (`docs/`): the working app (live site above), `ONE_PAGER.pdf` / `.md` (core idea and data model, one page), `ERRORS_FOUND.pdf` / `.md` (the errors found and how the design surfaced them). Also: `ONE_PAGER.md` (core idea and data model), `ERRORS_FOUND.md`, `AI_AND_TOOLS.md`, `VIDEO_SCRIPT.md`, `DESIGN_NOTES.md` (design references, model, roadmap).
+The app is static files, so any web server works:
 
-**Tests**: `node tools/logic-test.mjs`; with the server running, `node tools/e2e.mjs` (every route) and `node tools/flow.mjs` (a whole season through the real app code).
+```
+python3 -m http.server 8000      # then open http://localhost:8000/
+```
+
+`node tools/build-single.mjs` builds a single self-contained file at `dist/workpaper.html` that works offline. `node tools/build-blog.mjs` regenerates `blog/index.html` from `docs/BLOG.md` (needs `pandoc`).
+
+## Tests
+
+- `node tools/logic-test.mjs`: checks and reconciliations against the packet.
+- `node tools/e2e.mjs`: opens every route in headless Chromium (serve the folder first).
+- `node tools/flow.mjs`: runs a whole season through the real app code, from preparation to filing, including role rules, stale signatures, an e-file rejection, freeze and amendment.
+
+## Publishing
+
+The site is published with GitHub Pages from the repository root (`index.html`, `js/`, `css/`, `data/`). `.nojekyll` keeps Pages from reprocessing the files.

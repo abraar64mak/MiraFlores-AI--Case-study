@@ -125,4 +125,4 @@ The assessment encourages the use of any tools, including AI, and asks how they 
 - **Implementation.** I used it to speed up implementation and to write automated tests that open every screen as every role and run a full season from preparation to filing. I reviewed the behaviour of each screen and corrected what the tests and my own review found.
 - **Documentation.** I used it for first drafts of the write-ups, which I then edited.
 
-The app itself does not use AI to make decisions. The same data always produces the same findings. More detail is in `docs/AI_AND_TOOLS.md`.
+The app itself does not use AI. The same data always produces the same findings. More detail is in `docs/AI_AND_TOOLS.md`.

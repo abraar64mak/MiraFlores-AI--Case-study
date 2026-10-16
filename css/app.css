@@ -255,7 +255,6 @@ mark.hl.focus { outline: 3px solid var(--accent); background: rgba(80, 110, 255,
 .print-only { display: none; }
 @media print { #top, #nav, #drawer, #scrim, #cmdk, .noprint { display: none !important; } #app { display: block; } #main { overflow: visible; padding: 0; } body { background: #fff; } .print-only { display: block; } }
 
-.aibox { border: 1px dashed var(--adj); background: color-mix(in srgb, var(--adj-soft) 45%, var(--panel)); border-radius: 12px; padding: 12px 14px; }
 /* ---------- responsive ---------- */
 @media (max-width: 1100px) { .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .searchbtn { min-width: 0; } .searchbtn .lbl { display: none; } }
 @media (max-width: 860px) {

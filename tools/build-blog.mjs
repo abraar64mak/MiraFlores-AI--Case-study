@@ -97,7 +97,7 @@ footer .in { max-width: 1060px; margin: 0 auto; display: flex; flex-wrap: wrap; 
   <nav class="toc" aria-label="Contents"><h4>In this post</h4>${toc.map((t) => `<a href="#${t.id}"><span class="n">${t.n || "·"}</span><span>${t.label}</span></a>`).join("")}</nav>
   <article>${intro}${sections.join("\n")}</article>
 </div>
-<footer><div class="in"><span>Written by abraar64mak.</span><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study/blob/claude/gifted-wright-vops7y/docs/AI_AND_TOOLS.md">How I used AI</a><a href="../">The workpaper</a><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study">Source on GitHub</a></div></footer>
+<footer><div class="in"><span>Written by abraar64mak.</span><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study/blob/HEAD/docs/AI_AND_TOOLS.md">How I used AI</a><a href="../">The workpaper</a><a href="https://github.com/abraar64mak/MiraFlores-AI--Case-study">Source on GitHub</a></div></footer>
 <script>
 (function () {
   var bar = document.getElementById("bar"), links = [].slice.call(document.querySelectorAll("nav.toc a")), secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });

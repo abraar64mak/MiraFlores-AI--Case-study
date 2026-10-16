@@ -1,7 +1,4 @@
-# Design notes (UI v2)
-
-## Model
-Built with Claude Code running **claude-sonnet-5-5** (Claude Sonnet 5.5), in an interactive cloud session. No AI runs inside the app.
+# Design notes
 
 ## What the design is for
 Every person at the firm opens the same evidence, but a preparer, a reviewer, a partner, the firm administrator, the quality reviewer and the client do different jobs. So the shell changes with the role:
@@ -26,14 +23,13 @@ These are design influences from products I know well, applied from memory. I di
 - Typography: Manrope (UI) and IBM Plex Mono (figures), both from Google Fonts, with system fallbacks. Palette: ink rail, cool paper canvas, one accent, per-role signal colour; light and dark.
 
 ## New features in this version
-Optional AI helpers (explain a number, draft a client question, summarize a thread or document; draft-only, evidence-grounded, masked); role-aware navigation, top bar and home desks; command palette; notifications menu; tax bridge chart; findings-by-area heat bars; readiness ring; first-run guide per role and a guide drawer; client journey; "Load demo activity" to populate every desk; mobile bottom navigation.
+Role-aware navigation, top bar and home desks; command palette; notifications menu; tax bridge chart; findings-by-area heat bars; readiness ring; first-run guide per role and a guide drawer; client journey; "Load demo activity" to populate every desk; mobile bottom navigation.
 
 ## Feature ideas, in the order I would build them
-1. **Real multi-user**: move the event log to a shared store (the artifact `db` capability, or a small server) so people on different machines see changes live; add sign-in so roles come from identity, not a switcher.
-2. **Explain this number** with Claude: a button in the trace drawer that explains a figure in plain language, citing the same evidence (never changes a value).
-3. **Page-image overlay**: render real pages from the extraction pipeline and draw the packet's coordinates over them.
-4. **Export**: review memo, client copy and IRS response as PDF or Word; one-click audit bundle (log + evidence).
-5. **Client portal**: uploads with automatic "what is this?" classification, e-signature with real identity proofing, SMS/email reminders.
-6. **Deadlines calendar** with extension and estimate reminders; a firm-wide board across clients; time tracking with timers.
-7. **Saved views, bulk editing of variances, keyboard shortcuts in lists**; comparison of two document versions side by side.
-8. **Risk scoring** across the firm's returns: which clients repeat the same error types.
+1. **Real multi-user**: move the event log to a shared store (a hosted database or a small server) so people on different machines see changes live; add sign-in so roles come from identity, not a switcher.
+2. **Page-image overlay**: render real pages from the extraction pipeline and draw the packet's coordinates over them.
+3. **Export**: review memo, client copy and IRS response as PDF or Word; one-click audit bundle (log + evidence).
+4. **Client portal**: uploads with automatic "what is this?" classification, e-signature with real identity proofing, SMS/email reminders.
+5. **Deadlines calendar** with extension and estimate reminders; a firm-wide board across clients; time tracking with timers.
+6. **Saved views, bulk editing of variances, keyboard shortcuts in lists**; comparison of two document versions side by side.
+7. **Risk scoring** across the firm's returns: which clients repeat the same error types.

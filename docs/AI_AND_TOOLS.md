@@ -1,12 +1,17 @@
-# How AI and tools were used
+# How AI and other tools were used
 
-- **Claude Code (Claude Sonnet 5.5) in a cloud session** read the brief and the packet, designed the checks, wrote all of the application code, tests and documents in this repository, and drove the build in conversation with me. I set the direction (evidence graph, independent checks, scope order) and approved each step.
-- **The packet was read with scripts**, not by eye: structure dumps, comparisons of `printed_content` against `extracted_values`, and diffs between return versions. Every error in `ERRORS_FOUND.md` was confirmed against the printed text of the documents before it was coded as a check.
-- **Research before building**: a web search for related work on provenance, rules-as-code and automation bias (W3C PROV, why/where provenance, provenance semirings, Catala, Parasuraman and Manzey, auditor automation studies, local-first software). Summaries were checked against the sources' abstracts; several papers were only seen as abstracts and are cited that way.
-- **Testing**: a headless Chromium (Playwright) walk through every route (`tools/e2e.mjs`), a scripted season through the real app code including role enforcement, stale sign-offs, an e-file rejection and acceptance, freeze and amendment (`tools/flow.mjs`), and a logic test (`tools/logic-test.mjs`).
-- **AI inside the app (hosted version only), draft-only.** The case study does not ask for any, and the checks that find the errors are deterministic code, so the same packet always produces the same findings. Three optional helpers use Claude through the artifact `sample` capability, on the viewer's own account and only after their consent:
-  1. *Explain this number*: a plain-language explanation built only from the line's rule, inputs, sources, verifications and findings, with citations that open the evidence.
-  2. *Draft client question*: a short, plain-language question from a finding; it opens the normal question dialog pre-filled, and a person edits and sends it.
-  3. *Summarize a thread or a document*.
-  Guardrails: every request lists the exact evidence sent ("Evidence sent to Claude"), SSNs and account numbers are masked before sending, document text is fenced as data, nothing an AI returns changes a value, and where Claude is not available the buttons are absent. Two ways to run: through Claude's own page feature when hosted on claude.ai, or through `api/ai.js` (a serverless function holding the API key) when deployed publicly (`docs/DEPLOY.md`; default model `claude-opus-5-5`, access code and rate limits available). Not run against the real model in my tests (it needs a signed-in viewer); the interface was tested against a mock (`tools/ai-test.mjs`).
-- **Limits I know of**: tax effects are estimates; the simulated documents are rendered from text; the app has no server, so "several people at once" is several tabs of one browser.
+The brief allows any tools, including AI, and asks how they were used.
+
+**Tool.** I worked with Claude Code (an AI coding assistant) in an interactive session. I used it for research summaries, analysis scripts, implementation, test automation and first drafts of documents.
+
+**My part.** I set the direction and scope: the evidence-and-claims idea, independent checks between sources, the roles and their rules, and which parts to build deeply and which lightly. I reviewed what the tool produced, ran it, and corrected it.
+
+**How the packet was read.** With scripts, not by eye: structure dumps, comparisons of each page's `printed_content` against its `extracted_values`, comparisons between documents, and diffs between the three return versions. I confirmed every error in `ERRORS_FOUND.md` against the printed text of the documents before it became a check.
+
+**Research.** Before building I searched for related work on provenance, rules as code and automation bias (W3C PROV, why- and where-provenance, provenance semirings, Catala, Parasuraman and Manzey, auditor automation studies, local-first software). I used it to shape the design. Several papers were only read as abstracts and are described that way.
+
+**Testing.** A headless browser walk through every route (`tools/e2e.mjs`), a scripted season through the real app code including role enforcement, stale sign-offs, an e-file rejection and acceptance, freeze and amendment (`tools/flow.mjs`), and a logic test (`tools/logic-test.mjs`).
+
+**AI in the app.** None. The checks that find the errors are deterministic code, so the same packet always produces the same findings, and nothing in the app calls a model.
+
+**Known limits.** Tax effects are estimates (change multiplied by the rate the packet gives, because the engine cannot be rerun). The source pages are rendered from the packet's text, not real page images. The app has no server, so "several people at once" means several tabs of one browser.
